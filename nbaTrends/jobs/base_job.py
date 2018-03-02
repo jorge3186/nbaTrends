@@ -29,11 +29,12 @@ class BaseJob(object):
 
             :param job_name - The name that will be given to the SparkContext.
         """
-        self.conf = SparkConf()\
+        conf = SparkConf()\
             .setAppName(job_name)\
-            .setMaster(config_utils.get_config_string('spark_master', section='Spark'))
+            .setMaster(config_utils.get_config_string('spark_master', 'Spark'))
 
-        self.sc = SparkContext(self.conf)
+        self.sc = SparkContext(conf)
 
-    def sched(self, crontab_str=None):
+    def set_sched(self, sched_context):
         pass
+
