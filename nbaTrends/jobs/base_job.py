@@ -14,9 +14,8 @@ __license__ = "GPL"
 __version__ = "0.0.1"
 __maintainer__ = "Jordan Alphonso"
 __email__ = "jordanalphonso1@yahoo.com"
-__status__ = "Development"
 
-from src.utils.config_utils import *
+from nbaTrends.utils import config_utils
 
 from pyspark import SparkConf
 from pyspark import SparkContext
@@ -32,7 +31,7 @@ class BaseJob(object):
         """
         self.conf = SparkConf()\
             .setAppName(job_name)\
-            .setMaster(get_config_string('spark_master', section='Spark'))
+            .setMaster(config_utils.get_config_string('spark_master', section='Spark'))
 
         self.sc = SparkContext(self.conf)
 

@@ -14,14 +14,14 @@ __license__ = "GPL"
 __version__ = "0.0.1"
 __maintainer__ = "Jordan Alphonso"
 __email__ = "jordanalphonso1@yahoo.com"
-__status__ = "Development"
 
 import ConfigParser
 import os
 
-cwd = os.path.dirname(os.path.realpath(__file__))
+config_file_path = os.path.dirname(os.path.realpath(__file__)) + '/../resources/config.ini'
+
 conf = ConfigParser.ConfigParser()
-conf.read(cwd + '/../resources/config.ini')
+conf.read(config_file_path)
 
 conf_map = {}
 
@@ -46,8 +46,9 @@ def get_config_string(name, section=None):
 
         :param name - Name of Config Item
         :param section - Name of the section where the config item exists
+        :returns str value or None
     """
-    if bool(conf_map):
+    if len(conf_map) == 0:
         _init_conf()
     return get_config_item(name, str, section)
 
@@ -57,8 +58,9 @@ def get_config_bool(name, section=None):
 
         :param name - Name of Config Item
         :param section - Name of the section where the config item exists
+        :returns bool false or None
     """
-    if bool(conf_map):
+    if len(conf_map) == 0:
         _init_conf()
     return get_config_item(name, bool, section)
 
@@ -68,8 +70,9 @@ def get_config_int(name, section=None):
 
         :param name - Name of Config Item
         :param section - Name of the section where the config item exists
+        :returns int value or None
     """
-    if bool(conf_map):
+    if len(conf_map) == 0:
         _init_conf()
     return get_config_item(name, int, section)
 
@@ -79,35 +82,34 @@ def get_config_float(name, section=None):
 
         :param name - Name of Config Item
         :param section - Name of the section where the config item exists
+        :returns float value or None
     """
-    if bool(conf_map):
+    if len(conf_map) == 0:
         _init_conf()
     return get_config_item(name, float, section)
 
 
-def get_config_item(name, type, section=None):
+def get_config_item(name, type=str, section=None):
     """Get a config attribute. By default, if no type is passed
         then it will be returned as a str.
 
         :param name - Name of Config Item
+        :param type - type of value to return
         :param section - Name of the section where the config item exists
+        :return value of specified type or None
     """
-    typ = type
-    if bool(conf_map):
+    if len(conf_map) == 0:
         _init_conf()
-    if type is None:
-        typ = str
 
     if section is None:
         for k, sec in conf_map.items():
             for nme, opt in sec.items():
                 if nme == name:
-                    return typ(opt)
+                    return type(opt)
     else:
         for item in conf_map[section]:
-            for k, opt in item.items():
-                if k == name:
-                    return typ(opt)
+            if item == name:
+                return type(conf.get(section, item))
     return None
 
 
