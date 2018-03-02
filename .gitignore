@@ -5,3 +5,5 @@ selenium/
 share/
 .Python
 pip-selfcheck.json
+*.pyc
+nbaTrends/resources/config.ini
