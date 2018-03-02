@@ -5,3 +5,4 @@ selenium/
 share/
 .Python
 pip-selfcheck.json
+resources/config.ini
