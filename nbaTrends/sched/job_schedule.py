@@ -16,22 +16,18 @@ __maintainer__ = "Jordan Alphonso"
 __email__ = "jordanalphonso1@yahoo.com"
 
 
-class SchedContext(object):
-
-    def __init__(self):
-        self.builder = SchedContext()
+class JobScheduler(object):
 
     def only_if_jobs_passed(self, job):
-        return self.builder
+        return self
 
     def only_if_jobs_failed(self, job):
-        return self.builder
+        return self
 
     def only_on_days_of_week(self, days):
-        return self.builder
+        return self
 
 
-SchedContext()\
-    .builder\
+JobScheduler()\
     .only_if_jobs_passed('job1')\
     .only_on_days_of_week('m,t,w,th,f')
