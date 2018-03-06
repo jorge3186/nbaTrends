@@ -35,6 +35,3 @@ class BaseJob(object):
 
         self.sc = SparkContext(conf)
 
-    def set_sched(self, sched_context):
-        pass
-

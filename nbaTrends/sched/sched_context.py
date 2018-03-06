@@ -15,19 +15,21 @@ __version__ = "0.0.1"
 __maintainer__ = "Jordan Alphonso"
 __email__ = "jordanalphonso1@yahoo.com"
 
+from nbaTrends.utils import config_utils
+from crontab import CronTab
 
-class JobScheduler(object):
 
-    def only_if_jobs_passed(self, job):
+class SchedContext(object):
+
+    def __init__(self):
+        self.cron = CronTab(user=config_utils.get_config_string('user', 'Crontab'))
+
+    def add_job(self, job, sched):
         return self
 
-    def only_if_jobs_failed(self, job):
+    def get_job_sched(self, job):
         return self
 
-    def only_on_days_of_week(self, days):
-        return self
+    def has_job(self, job):
 
-
-JobScheduler()\
-    .only_if_jobs_passed('job1')\
-    .only_on_days_of_week('m,t,w,th,f')
+        return False

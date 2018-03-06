@@ -13,4 +13,9 @@ __version__ = "0.0.1"
 __maintainer__ = "Jordan Alphonso"
 __email__ = "jordanalphonso1@yahoo.com"
 
-import nbaTrends.jobs.base_job
+from nbaTrends.jobs.base_job import BaseJob
+
+__all__ = [
+    "BaseJob"
+]
+
