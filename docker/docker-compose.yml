@@ -75,10 +75,44 @@ services:
       - hadoop_master
     deploy:
       mode: replicated
-      replicas: 4
+      replicas: 3
+
+
+  #
+  # NBA Trends Jobs 
+  #
+  # Build master node first
+  spark_master:
+    build:
+      context: ../nbaTrends-jobs/docker
+      dockerfile: Dockerfile-master
+    network:
+      - hadoop
+      - spark
+    depends_on:
+      - hadoop_master
+      - hadoop_worker
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  # build spark worker nodes 
+  spark_worker:
+    build:
+      context: ../nbaTrends-jobs/docker
+      dockerfile: Dockerfile-worker
+    network:
+      - hadoop
+      - spark
+    depends_on:
+      - spark_master
+    deploy:
+      mode: replicated
+      replicas: 3
 
 
 # connectivity networks
 networks:
   elasticsearch:
   hadoop:
+  spark:

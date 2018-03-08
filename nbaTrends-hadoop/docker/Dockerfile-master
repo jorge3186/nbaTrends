@@ -6,6 +6,7 @@ RUN yum clean all; \
     rpm --rebuilddb; \
     yum install -y curl which tar sudo openssh-server openssh-clients rsync
 
+RUN yum -y update
 RUN yum update -y libselinux
 
 RUN ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
