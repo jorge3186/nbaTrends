@@ -1,0 +1,84 @@
+version "3"
+services:
+
+  #
+  # ELK Stack
+  #
+  # build elasticsearch first 
+  elasticsearch:
+    environment: 
+      - ELK_VERSION
+      - ES_JAVA_OPTS: "-Xms256m -Xmx256m"
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
+    ports:
+      - 9002:9002
+      - 9003:9003
+    networks:
+      - elasticsearch
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  # build kibana once elasticsearch is done
+  kibana:
+    environment:
+      - ELK_VERSION
+    image: docker.elastic.co/kibana/kibana:${ELK_VERSION}
+    ports:
+      - 5601:5601
+    networks:
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  # build logstash after kibana
+  logstash:
+    environment:
+      - ELK_VERSION
+    image: docker.elastic.co/logstash/logstash:${ELK_VERSION}
+    ports:
+      - 5000:5000
+    networks:
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+    deploy:
+      mode: replicated
+      replicas: 1
+
+
+  #
+  # Hadoop HDFS System
+  #
+  # build hadoop master node first
+  hadoop_master:
+    build:
+      context: ../nbaTrends-hadoop/docker
+      dockerfile: Dockerfile-master
+    networks:
+      - hadoop
+    deploy:
+      mode: replicated
+      replicas: 1
+  
+  # create worker nodes once master is built
+  hadoop_worker:
+    build:
+      context: ../nbaTrends-hadoop/docker
+      dockerfile: Dockerfile-worker
+    networks:
+      - hadoop
+    depends_on:
+      - hadoop_master
+    deploy:
+      mode: replicated
+      replicas: 4
+
+
+# connectivity networks
+networks:
+  elasticsearch:
+  hadoop:
