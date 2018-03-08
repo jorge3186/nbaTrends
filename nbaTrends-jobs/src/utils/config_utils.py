@@ -15,12 +15,12 @@ __version__ = "0.0.1"
 __maintainer__ = "Jordan Alphonso"
 __email__ = "jordanalphonso1@yahoo.com"
 
-import ConfigParser
+import configparser
 import os
 
 config_file_path = os.path.dirname(os.path.realpath(__file__)) + '/../resources/config.ini'
 
-conf = ConfigParser.ConfigParser()
+conf = configparser.ConfigParser()
 conf.read(config_file_path)
 
 conf_map = {}

@@ -15,7 +15,7 @@ __version__ = "0.0.1"
 __maintainer__ = "Jordan Alphonso"
 __email__ = "jordanalphonso1@yahoo.com"
 
-from nbaTrends.utils import config_utils
+from src.utils import config_utils
 from crontab import CronTab
 
 

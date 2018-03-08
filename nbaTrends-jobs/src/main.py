@@ -2,7 +2,7 @@
 """
     Main File for NBA Trends
 
-    Start the application and configures Crontab with all
+    Starts the application and configures Crontab with all
     available jobs.
 """
 
@@ -14,21 +14,17 @@ __version__ = "0.0.1"
 __maintainer__ = "Jordan Alphonso"
 __email__ = "jordanalphonso1@yahoo.com"
 
-import nbaTrends.jobs as jobs
-from nbaTrends.sched.sched_context import SchedContext
-
-job_files = []
-
-def main():
-    """
-        Gather all jobs from job context and setup crontab
-    """
-    sched = SchedContext()
-    for job in jobs.__all__:
-        j = getattr(jobs, job)
-        job_instance = j()
-        sched.add_job(job_instance, "")
-
+import src.jobs as jobs
+from src.sched.sched_context import SchedContext
 
 if __name__ == "__main__":
-    main()
+    """
+        Gather all jobs from job context and setup crontab
+        
+        By Instansiating the class object, The Crontab Context 
+        will be updated to create/update job context
+    """
+    for job in jobs.__all__:
+        j = getattr(jobs, job)
+        j()
+

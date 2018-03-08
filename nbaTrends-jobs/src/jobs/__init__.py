@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """
-    Utils
+    Jobs
 
-    Root package for all Utility Classes and Functions
+    Root Package for all Jobs
 """
 
 __author__ = "Jordan Alphonso"
@@ -13,9 +13,8 @@ __version__ = "0.0.1"
 __maintainer__ = "Jordan Alphonso"
 __email__ = "jordanalphonso1@yahoo.com"
 
-from nbaTrends.utils.config_utils import *
+from src.jobs.espn_scrapper import ESPNScrapperJob
 
 __all__ = [
-    "get_config_string", "get_config_float", "get_config_int",
-    "get_config_item", "get_config_bool"
+    "ESPNScrapperJob"
 ]

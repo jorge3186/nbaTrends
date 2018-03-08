@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """
-    NBA Trends Package
+    Utils
+
+    Root package for all Utility Classes and Functions
 """
 
 __author__ = "Jordan Alphonso"
@@ -10,3 +12,10 @@ __license__ = "GPL"
 __version__ = "0.0.1"
 __maintainer__ = "Jordan Alphonso"
 __email__ = "jordanalphonso1@yahoo.com"
+
+from src.utils.config_utils import *
+
+__all__ = [
+    "get_config_string", "get_config_float", "get_config_int",
+    "get_config_item", "get_config_bool"
+]

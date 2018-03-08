@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 """
-    Jobs
-
-    Root Package for all Jobs
+    NBA Trends Source Code Package
 """
 
 __author__ = "Jordan Alphonso"
@@ -12,10 +10,3 @@ __license__ = "GPL"
 __version__ = "0.0.1"
 __maintainer__ = "Jordan Alphonso"
 __email__ = "jordanalphonso1@yahoo.com"
-
-from nbaTrends.jobs.base_job import BaseJob
-
-__all__ = [
-    "BaseJob"
-]
-
