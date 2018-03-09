@@ -8,6 +8,7 @@ RUN yum clean all; \
 
 RUN yum -y update
 RUN yum update -y libselinux
+RUN yum install -y wget
 
 RUN ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
 RUN ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key
@@ -18,9 +19,9 @@ RUN cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
 RUN yum install -y cronie
 
 # Java 1.8
-RUN curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u161-b12/jdk-8u161-linux-x64.rpm' -H 'Cookie: oraclelicense=accept-securebackup-cookie'
+RUN wget --header 'Cookie: oraclelicense=accept-securebackup-cookie' http://download.oracle.com/otn-pub/java/jdk/8u161-b12/jdk-8u161-linux-x64.rpm
 RUN rpm -i jdk-8u161-linux-x64.rpm
-RUN rm jdk-8u161-linux-x64.rpm
+RUN rm -f jdk-8u161-linux-x64.rpm
 
 ENV JAVA_HOME /usr/java/default
 ENV PATH $PATH:$JAVA_HOME/bin
@@ -35,5 +36,8 @@ COPY ./entrypoint-master.sh /root/scripts/entrypoint.sh
 # src files for nbaTrends App
 RUN mkdir /root/nbaTrends
 COPY ./src/* /root/nbaTrends
+
+# copy filebeat config
+COPY ./filebeat-master.yml /usr/share/filebeat/filebeat.yml
 
 ENTRYPOINT ["/root/scripts/entrypoint.sh"]

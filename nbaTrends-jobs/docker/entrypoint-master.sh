@@ -3,5 +3,9 @@
 # start crontab
 service crond start
 
-cd /root
+# install dependencies with pip
+cd /root/nbaTrends
+pip install -r requirements-linux.txt
+
+# schedule cron jobs
 python -m nbaTrends.scheduler

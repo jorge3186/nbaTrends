@@ -1,0 +1,5 @@
+filebeat.prospectors:
+  - type: log
+  enabled: true
+  paths:
+    - /root/nbaTrends/logs/*.log
