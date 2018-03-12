@@ -1,23 +1,18 @@
-FROM centos:7
+FROM centos:centos7
 
 USER root
 
 RUN yum clean all; \
-    rpm --rebuilddb; \
     yum install -y curl which tar sudo openssh-server openssh-clients rsync
 
 RUN yum -y update
-RUN yum update -y libselinux
-RUN yum -y install rpm-build
 RUN yum install -y initscripts && yum clean all
 
 # pam
-RUN yum-builddep -y pam
-RUN yumdownloader --source pam
 
-RUN ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
-RUN ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key
-RUN ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa
+RUN ssh-keygen -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
+RUN ssh-keygen -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key
+RUN ssh-keygen -N "" -t rsa -f /root/.ssh/id_rsa
 RUN cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
 
 # Java 1.8
@@ -47,7 +42,6 @@ ENV HADOOP_HDFS_HOME /usr/local/hadoop
 ENV HADOOP_MAPRED_HOME /usr/local/hadoop
 ENV HADOOP_YARN_HOME /usr/local/hadoop
 ENV HADOOP_CONF_DIR /usr/local/hadoop/etc/hadoop
-ENV YARN_CONF_DIR /usr/local/hadoop/etc/hadoop
 
 ENV HDFS_NAMENODE_USER root
 ENV HDFS_DATANODE_USER root
@@ -55,26 +49,29 @@ ENV HDFS_SECONDARYNAMENODE_USER root
 ENV YARN_NODEMANAGER_USER root
 ENV YARN_RESOURCEMANAGER_USER root
 
+ENV PATH $PATH:$HADOOP_HOME/bin
+
 COPY ./core-site.xml /usr/local/hadoop/etc/hadoop/core-site.xml
 COPY ./hdfs-site.xml /usr/local/hadoop/etc/hadoop/hdfs-site.xml
 
-RUN $HADOOP_HOME/bin/hdfs namenode -format
+RUN mkdir /var/run/sshd
 
-COPY ssh_config /root/.ssh/config
-RUN chmod 600 /root/.ssh/config
-RUN chown root:root /root/.ssh/config
+COPY ./entrypoint.sh /root
+RUN echo "root\nroot" | (passwd --stdin root)
+RUN chmod +x /root/entrypoint.sh
 
-RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config
-RUN echo "UsePAM no" >> /etc/ssh/sshd_config
-RUN echo "Port 2122" >> /etc/ssh/sshd_config
+RUN sed -i 's/# export JAVA_HOME=/export JAVA_HOME=\/usr\/java\/default/' $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+RUN chmod +x $HADOOP_CONF_DIR/hadoop-env.sh
 
-RUN sed -i 's/# export JAVA_HOME=/export JAVA_HOME=\/usr\/java\/default/' /usr/local/hadoop/etc/hadoop/hadoop-env.sh
+RUN $HADOOP_CONF_DIR/hadoop-env.sh
 
 # HDFS Ports
-EXPOSE 50010 50020 50070 50090 8020 9000
+EXPOSE 50010 50020 9870 50090 8020 9000
 # Map/Reduce Ports
 EXPOSE 10020 19888
 # Yarn Ports 
 EXPOSE 8030 8031 8032 8033 8040 8042 8088
 # Other ports
-EXPOSE 49707 2122
+EXPOSE 49707
+
+ENTRYPOINT ["/root/entrypoint.sh"]
