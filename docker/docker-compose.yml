@@ -55,6 +55,8 @@ services:
     build:
       context: ../nbaTrends-hadoop/docker
       dockerfile: Dockerfile-master
+    container_name: namenode
+    hostname: namenode
     networks:
       - hadoop
     deploy:
@@ -68,6 +70,8 @@ services:
     build:
       context: ../nbaTrends-hadoop/docker
       dockerfile: Dockerfile-worker
+    container_name: worker
+    hostname: worker
     networks:
       - hadoop
     depends_on:
