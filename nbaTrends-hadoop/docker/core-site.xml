@@ -2,7 +2,11 @@
 
     <property>
         <name>fs.default.name</name>
-        <value>hdfs://namenode:9000</value>
+        <value>hdfs://hdfs-master:57199</value>
+    </property>
+
+    <property>
+        <name></name>
     </property>
 
 </configuration>

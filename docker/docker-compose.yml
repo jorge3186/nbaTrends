@@ -1,15 +1,12 @@
-version "3"
+version: "3.2"
 services:
-
-  #
-  # ELK Stack
-  #
-  # build elasticsearch first 
   elasticsearch:
-    environment: 
-      - ES_JAVA_OPTS: "-Xms256m -Xmx256m"
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     image: docker.elastic.co/elasticsearch/elasticsearch:6.2.2
+    hostname: elasticsearch
     ports:
+      - 9200:9200
       - 9002:9002
       - 9003:9003
     networks:
@@ -18,108 +15,53 @@ services:
       mode: replicated
       replicas: 1
 
-  # build kibana once elasticsearch is done
   kibana:
     image: docker.elastic.co/kibana/kibana:6.2.2
+    hostname: kibana
     ports:
-      - 5601:5601
+      - 57000:5601
     networks:
       - elasticsearch
+      - hadoop
     depends_on:
       - elasticsearch
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 1 
 
-  # build logstash after kibana
   logstash:
     image: docker.elastic.co/logstash/logstash:6.2.2
+    hostname: logstash
     ports:
       - 5000:5000
+      - 5044:5044
     networks:
       - elasticsearch
+      - hadoop
     depends_on:
       - elasticsearch
     deploy:
       mode: replicated
       replicas: 1
 
-
-  #
-  # Hadoop HDFS System
-  #
-  # build hadoop master node first
   hadoop_master:
-    environment:
-      - HADOOP_VERSION
-    build:
+    build: 
       context: ../nbaTrends-hadoop/docker
-      dockerfile: Dockerfile-master
-    container_name: namenode
-    hostname: namenode
+    command: ["master"]
+    hostname: hdfs-master
+    ports:
+      - 9870:9870
+    depends_on:
+      - logstash
+      - kibana
     networks:
       - hadoop
-    deploy:
-      mode: replicated
-      replicas: 1
-  
-  # create worker nodes once master is built
-  hadoop_worker:
-    environment:
-      - HADOOP_VERSION
-    build:
-      context: ../nbaTrends-hadoop/docker
-      dockerfile: Dockerfile-worker
-    container_name: worker
-    hostname: worker
-    networks:
-      - hadoop
-    depends_on:
-      - hadoop_master
-    deploy:
-      mode: replicated
-      replicas: 3
+      - elasticsearch
 
-
-  #
-  # NBA Trends Jobs 
-  #
-  # Build master node first
-  spark_master:
-    environment:
-      - SPARK_VERSION
-    build:
-      context: ../nbaTrends-jobs/docker
-      dockerfile: Dockerfile-master
-    network:
-      - hadoop
-      - spark
-    depends_on:
-      - hadoop_master
-      - hadoop_worker
-    deploy:
-      mode: replicated
-      replicas: 1
-
-  # build spark worker nodes 
-  spark_worker:
-    environment:
-      - SPARK_VERSION
-    build:
-      context: ../nbaTrends-jobs/docker
-      dockerfile: Dockerfile-worker
-    network:
-      - hadoop
-      - spark
-    depends_on:
-      - spark_master
-    deploy:
-      mode: replicated
-      replicas: 3
-
-
-# connectivity networks
 networks:
   elasticsearch:
+    external:
+      name: elasticsearch
   hadoop:
-  spark:
+    external:
+      name: hadoop

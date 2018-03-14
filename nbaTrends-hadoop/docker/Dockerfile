@@ -1,4 +1,4 @@
-FROM centos:centos7
+FROM docker.elastic.co/beats/filebeat:6.2.2
 
 USER root
 
@@ -8,12 +8,12 @@ RUN yum clean all; \
 RUN yum -y update
 RUN yum install -y initscripts && yum clean all
 
-# pam
-
+# enable ssh
 RUN ssh-keygen -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
 RUN ssh-keygen -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key
 RUN ssh-keygen -N "" -t rsa -f /root/.ssh/id_rsa
 RUN cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
+RUN mkdir /var/run/sshd
 
 # Java 1.8
 RUN curl -v -j -k -L -O -H 'Cookie: oraclelicense=accept-securebackup-cookie' http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u161-linux-x64.rpm
@@ -29,7 +29,7 @@ RUN curl -v -j -k -L -O 'http://apache.claz.org/hadoop/common/hadoop-3.0.0/hadoo
 RUN tar -xzf hadoop-3.0.0.tar.gz
 RUN cp -R hadoop-3.0.0 /usr/local
 RUN rm -rf hadoop-3.0.0
-RUN rm -f hadoop-3.0.0
+RUN rm -f hadoop-3.0.0.tar.gz
 RUN cd /usr/local && ln -s ./hadoop-3.0.0 /usr/local/hadoop
 
 RUN mkdir /usr/local/hadoop/hdfs
@@ -42,7 +42,6 @@ ENV HADOOP_HDFS_HOME /usr/local/hadoop
 ENV HADOOP_MAPRED_HOME /usr/local/hadoop
 ENV HADOOP_YARN_HOME /usr/local/hadoop
 ENV HADOOP_CONF_DIR /usr/local/hadoop/etc/hadoop
-
 ENV HDFS_NAMENODE_USER root
 ENV HDFS_DATANODE_USER root
 ENV HDFS_SECONDARYNAMENODE_USER root
@@ -51,27 +50,27 @@ ENV YARN_RESOURCEMANAGER_USER root
 
 ENV PATH $PATH:$HADOOP_HOME/bin
 
-COPY ./core-site.xml /usr/local/hadoop/etc/hadoop/core-site.xml
-COPY ./hdfs-site.xml /usr/local/hadoop/etc/hadoop/hdfs-site.xml
-
-RUN mkdir /var/run/sshd
+COPY ./core-site.xml $HADOOP_CONF_DIR/core-site.xml
+COPY ./hdfs-site.xml $HADOOP_CONF_DIR/hdfs-site.xml
+COPY ./mapred-site.xml $HADOOP_CONF_DIR/mapred-site.xml
 
 COPY ./entrypoint.sh /root
-RUN echo "root\nroot" | (passwd --stdin root)
+RUN echo "rootroot\nrootroot" | (passwd --stdin root)
 RUN chmod +x /root/entrypoint.sh
 
-RUN sed -i 's/# export JAVA_HOME=/export JAVA_HOME=\/usr\/java\/default/' $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+RUN sed -i 's/# export JAVA_HOME=/export JAVA_HOME=\/usr\/java\/default/' $HADOOP_CONF_DIR/hadoop-env.sh
 RUN chmod +x $HADOOP_CONF_DIR/hadoop-env.sh
-
 RUN $HADOOP_CONF_DIR/hadoop-env.sh
 
-# HDFS Ports
-EXPOSE 50010 50020 9870 50090 8020 9000
-# Map/Reduce Ports
-EXPOSE 10020 19888
-# Yarn Ports 
-EXPOSE 8030 8031 8032 8033 8040 8042 8088
-# Other ports
-EXPOSE 49707
+# copy filebeat config
+COPY ./filebeat.yml /usr/share/filebeat/filebeat.yml
+RUN chown filebeat /usr/share/filebeat/filebeat.yml
 
-ENTRYPOINT ["/root/entrypoint.sh"]
+# HDFS Ports
+EXPOSE 9820 9864 9865 9866 9867 9869 9870 9871 57199
+# ssh port
+EXPOSE 22
+
+WORKDIR /root
+
+ENTRYPOINT ["./entrypoint.sh"]

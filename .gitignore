@@ -1,4 +1,12 @@
-.vscode
+# Visual Studio
+.vscode/
+
+# Intellij / Pycharm
+nbaTrends-jobs/.Python
+.Python
+
+# python ignores
+nbaTrends-jobs/*.pyc
 nbaTrends-jobs/bin/
 nbaTrends-jobs/include/
 nbaTrends-jobs/Include/
@@ -8,12 +16,10 @@ nbaTrends-jobs/Scripts/
 nbaTrends-jobs/tcl/
 nbaTrends-jobs/selenium/
 nbaTrends-jobs/share/
-nbaTrends-jobs/.Python
 nbaTrends-jobs/pip-selfcheck.json
-nbaTrends-jobs/nbaTrends/resources/config.ini
-nbaTrends-jobs/*.pyc
-nbaTrends-jobs/logs/
-nbaTrends-jobs/.vscode/
 
-nbaTrends-hadoop/*.pyc
-nbaTrends-hadoop/logs/
+# logs
+nbaTrends-jobs/logs/
+
+# config files (specific to each machine)
+nbaTrends-jobs/nbaTrends/resources/config.ini
