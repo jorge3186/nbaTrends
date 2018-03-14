@@ -15,7 +15,7 @@ These 3 networks need to be created before building
 These networks can either be bridge or overlay networks based on your docker swarm configuration.
 Examples: 
 - `docker network create -d bridge elasticsearch`
-- `dcoker network create -d overlay hadoop`
+- `docker network create -d overlay hadoop`
 
 ### Compose
 Once networks have been created just run the following commands:
