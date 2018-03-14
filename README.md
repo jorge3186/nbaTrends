@@ -4,7 +4,7 @@ This is a docker service that will user web-scraper jobs to pick up various NBA 
 ### Getting Started
 - Ensure docker is installed
 - [Create networks](#network-setup)
-- [Build](#compose)
+- [Build](#build/compose)
 
     ### Network Setup
     These 3 networks need to be created before building
@@ -19,9 +19,11 @@ This is a docker service that will user web-scraper jobs to pick up various NBA 
     docker network create -d overlay hadoop
     ```
 
-    ### Compose
+    ### Build/Compose
     Once networks have been created just run the following commands:
     ```
     cd ./docker
     docker-compose up
+    #or
+    docker stack deploy -c ./docker-compose.yml <stack_name>
     ```
