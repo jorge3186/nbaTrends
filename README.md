@@ -4,7 +4,7 @@ This is a docker service that will user web-scraper jobs to pick up various NBA 
 ### Getting Started
 - Ensure docker is installed
 - [Create networks](#network-setup)
-- [Build](#build/compose)
+- [Build](#build-compose)
 
     ### Network Setup
     These 3 networks need to be created before building
@@ -14,14 +14,14 @@ This is a docker service that will user web-scraper jobs to pick up various NBA 
 
     These networks can either be <strong>bridge</strong> or <strong>overlay</strong> networks based on your docker swarm configuration.
     Examples: 
-    ```
+    ```bash
     docker network create -d bridge elasticsearch
     docker network create -d overlay hadoop
     ```
 
-    ### Build/Compose
+    ### Build Compose
     Once networks have been created just run the following commands:
-    ```
+    ```bash
     cd ./docker
     docker-compose up
     #or
