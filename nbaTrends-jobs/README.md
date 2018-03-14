@@ -8,6 +8,8 @@ If you wish to make changes, and run the code in a local environment follow thes
 virtualenv .
 pip install -r requirements-<os>.txt
 source ./bin/activate
+# or on windows
+./Srcipts/activate.bat
 
 python --version # requires py 3
 ```
@@ -15,6 +17,7 @@ python --version # requires py 3
 ### Running Jobs
 ```bash
 python -m src.scheduler # will add jobs to crontab
-# or if you want to execute a job individually
+
+# or if you want to execute a specific job manually
 python -m src.executor <job_name> # job name is the python class that extends BaseJob
 ```
