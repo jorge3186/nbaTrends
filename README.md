@@ -12,7 +12,7 @@ This is a docker service that will user web-scraper jobs to pick up various NBA 
     - hadoop
     - spark
 
-    These networks can either be bridge or overlay networks based on your docker swarm configuration.
+    These networks can either be <strong>bridge</strong> or <strong>overlay</strong> networks based on your docker swarm configuration.
     Examples: 
     ```
     docker network create -d bridge elasticsearch
