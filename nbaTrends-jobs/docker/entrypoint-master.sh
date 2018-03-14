@@ -8,4 +8,4 @@ cd /root/nbaTrends
 pip install -r requirements-linux.txt
 
 # schedule cron jobs
-python -m nbaTrends.scheduler
+python -m src.scheduler

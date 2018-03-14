@@ -1,5 +1,17 @@
-filebeat.prospectors:
-  - type: log
-  enabled: true
-  paths:
-    - /root/nbaTrends/logs/*.log
+filebeat:
+  prospectors:
+    -
+      paths:
+        - /root/nbaTrends/logs/*.log
+      type: log
+      tags: ["nbaTrends-py", "log"]
+    -
+      paths:
+        - /path/to/spark/logs/*
+      type: log
+      tags: ["spark", "log"]
+
+
+output:
+  logstash:
+    hosts: ["logstash:5044"]

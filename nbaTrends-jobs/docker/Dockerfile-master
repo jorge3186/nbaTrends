@@ -39,6 +39,6 @@ COPY ./src/* /root/nbaTrends
 
 # copy filebeat config
 COPY ./filebeat-master.yml /usr/share/filebeat/filebeat.yml
-RUN chown filebeat /usr/share/filebeat/filebeat.yml
+RUN chown root:filebeat /usr/share/filebeat/filebeat.yml
 
 ENTRYPOINT ["/root/scripts/entrypoint.sh"]

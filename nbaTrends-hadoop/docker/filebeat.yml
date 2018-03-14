@@ -2,18 +2,21 @@ filebeat:
   prospectors:
     -
       paths:
-        - /usr/local/hadoop-3.0.0/logs/*.log
-        - /usr/local/hadoop-3.0.0/logs/*.out
-        - /usr/local/hadoop-3.0.0/logs/*.err
-      input_type: log
+        - /usr/local/hadoop/logs/*.log
+      type: log
+      tags: ["hdfs-master", "log"]
+    -
+      paths:
+        - /usr/local/hadoop/logs/*.out
+      type: log
+      tags: ["hdfs-master", "out"]
+    -
+      paths:
+        - /usr/local/hadoop/logs/*.err
+      type: log
+      tags: ["hdfs-master", "err"]
+
 
 output:
   logstash:
     hosts: ["logstash:5044"]
-
-logging:
-  to_files: true
-  files:
-    path: /var/log/filebeat
-    name: beatslog
-    rotateeverybytes: 10485760
