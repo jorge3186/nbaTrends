@@ -64,10 +64,12 @@ RUN $HADOOP_CONF_DIR/hadoop-env.sh
 
 # copy filebeat config
 COPY ./filebeat.yml /usr/share/filebeat/filebeat.yml
-RUN chown filebeat /usr/share/filebeat/filebeat.yml
+RUN chown root:filebeat /usr/share/filebeat/filebeat.yml
 
 # HDFS Ports
 EXPOSE 9820 9864 9865 9866 9867 9869 9870 9871 57199
+# Beats
+EXPOSE 5044 37978
 # ssh port
 EXPOSE 22
 

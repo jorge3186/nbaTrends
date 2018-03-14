@@ -32,6 +32,10 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash:6.2.2
     hostname: logstash
+    volumes:
+      - type: bind
+        source: ./logstash.conf
+        target: /usr/share/logstash/pipeline/logstash.conf
     ports:
       - 5000:5000
       - 5044:5044
