@@ -1,11 +1,13 @@
 #!/bin/bash
 
 # start crontab
-service crond start
+#service crond start
 
 # install dependencies with pip
-cd /root/nbaTrends
-pip install -r requirements-linux.txt
+#cd /root
+#pip install -r requirements-linux.txt
 
 # schedule cron jobs
-python -m src.scheduler
+#python -m scheduler
+
+sleep infinity

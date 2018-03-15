@@ -19,7 +19,7 @@ RUN cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
 RUN yum install -y cronie
 
 # Java 1.8
-RUN wget --header 'Cookie: oraclelicense=accept-securebackup-cookie' http://download.oracle.com/otn-pub/java/jdk/8u161-b12/jdk-8u161-linux-x64.rpm
+RUN curl -v -j -k -L -O -H 'Cookie: oraclelicense=accept-securebackup-cookie' http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u161-linux-x64.rpm
 RUN rpm -i jdk-8u161-linux-x64.rpm
 RUN rm -f jdk-8u161-linux-x64.rpm
 
@@ -28,6 +28,12 @@ ENV PATH $PATH:$JAVA_HOME/bin
 RUN rm /usr/bin/java && ln -s $JAVA_HOME/bin/java /usr/bin/java
 
 # Spark 
+RUN curl -v -j -k -L -O 'http://apache.claz.org/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz'
+RUN tar -xzf spark-2.3.0-bin-hadoop2.7.tgz
+RUN cp -R spark-2.3.0-bin-hadoop2.7 /usr/local
+RUN rm -rf spark-2.3.0-bin-hadoop2.7
+RUN rm -f spark-2.3.0-bin-hadoop2.7.tgz
+RUN cd /usr/local && ln -s ./spark-2.3.0-bin-hadoop2.7 /usr/local/spark
 
 
 RUN mkdir /root/scripts
