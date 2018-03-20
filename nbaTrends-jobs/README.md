@@ -1,14 +1,15 @@
 # Jobs
 Python jobs executed in a docker container and scheduled with crontab.
-This application was built using virtualenv. 
+Using PySpark, jobs are executed in Apache Spark to fetch and transform data on a daily
+basis for the Current Trends in the NBA.
 
 ### Making Changes
 If you wish to make changes, and run the code in a local environment follow these steps:
 ```bash
-python --version # requires python 3 or greater
+python --version # prefer python 3 or greater
 
 virtualenv .
-pip install -r requirements-<os>.txt
+pip install -r requirements.txt
 source ./bin/activate
 # or on windows
 ./Srcipts/activate.bat

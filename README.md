@@ -7,10 +7,9 @@ This is a docker service that will user web-scraper jobs to pick up various NBA 
 - [Build](#build-compose)
 
     ### Network Setup
-    These 3 networks need to be created before building
+    These 2 networks need to be created before building
     - elasticsearch
     - hadoop
-    - spark
 
     These networks can either be <strong>bridge</strong> or <strong>overlay</strong> networks based on your docker swarm configuration.
     Examples: 
@@ -25,5 +24,5 @@ This is a docker service that will user web-scraper jobs to pick up various NBA 
     cd ./docker
     docker-compose up
     #or
-    docker stack deploy -c ./docker-compose.yml <stack_name>
+    docker stack deploy -c ./docker-compose.yml nbaTrends
     ```
