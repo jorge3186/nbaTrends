@@ -32,16 +32,17 @@ class BaseJob(object):
         """
         self.job_name = name
 
-    def pre_exec(self, sc):
+    def pre_run(self, sc):
         """Pre Hook for any necessary setup or executions that need to be done
             prior to job execution.
+            :param sc - Spark Context
         """
         pass
 
-    def post_exec(self, sc, job_success):
+    def on_complete(self, sc, success):
         """Post Hook execution for any necessary post conditions that need to be
             applied after a job has been completed.
-            :param job_success - If the job was a success or not
+            :param sc - Spark Context
         """
         pass
 
@@ -57,6 +58,7 @@ class BaseJob(object):
 
         logger.info('Starting SparkContext')
         sc = None
+        successful = True
         try:
             conf = SparkConf()\
                 .setAppName(self.job_name)\
@@ -65,18 +67,20 @@ class BaseJob(object):
             sc = SparkContext(conf=conf)
 
             logger.info('Starting Pre-Execution for job \'%s\'' % (self.job_name))
-            self.pre_exec(sc)
+            self.pre_run(sc)
             logger.info('Pre-Execution for job \'%s\' is complete' % (self.job_name))
 
             logger.info('Starting job \'%s\'' % (self.job_name))
-            run(sc)
+            self.run(sc)
             logger.info('job \'%s\' has finished' % (self.job_name))
-
-            logger.info('Starting Post-Execution for job \'%s\'' % (self.job_name))
-            post_exec(sc, job_success=True)
-            logger.info('Post-Execution for job \'%s\' is complete' % (self.job_name))
-        except:
+        except Exception as err:
             logger.error('Issue occured during execution')
+            logger.error(err.args)
+            successful = False
         finally:
+            logger.info('Starting Post-Execution for job \'%s\'' % (self.job_name))
+            self.on_complete(sc=sc, success=successful)
+            logger.info('Post-Execution for job \'%s\' is complete' % (self.job_name))
+
             if sc is not None:
                 sc.stop()

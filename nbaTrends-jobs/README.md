@@ -5,13 +5,13 @@ This application was built using virtualenv.
 ### Making Changes
 If you wish to make changes, and run the code in a local environment follow these steps:
 ```bash
+python --version # requires python 3 or greater
+
 virtualenv .
 pip install -r requirements-<os>.txt
 source ./bin/activate
 # or on windows
 ./Srcipts/activate.bat
-
-python --version # requires py 3
 ```
 
 ### Running Jobs

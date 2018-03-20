@@ -2,14 +2,14 @@ filebeat:
   prospectors:
     -
       paths:
-        - /root/nbaTrends/logs/*.log
+        - /usr/local/spark/logs/*.out
       type: log
-      tags: ["nbaTrends-py", "log"]
+      tags: ["spark", "out"]
     -
       paths:
-        - /path/to/spark/logs/*
+        - /usr/local/spark/logs/*.err
       type: log
-      tags: ["spark", "log"]
+      tags: ["spark", "err"]
 
 
 output:

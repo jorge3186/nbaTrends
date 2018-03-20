@@ -1,5 +1,7 @@
 version: "3.2"
 services:
+
+  # ELK - Elasticsearch 6.2.2
   elasticsearch:
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -11,10 +13,8 @@ services:
       - 9003:9003
     networks:
       - elasticsearch
-    deploy:
-      mode: replicated
-      replicas: 1
 
+  # ELK - Kibana 6.2.2
   kibana:
     image: docker.elastic.co/kibana/kibana:6.2.2
     hostname: kibana
@@ -25,10 +25,8 @@ services:
       - hadoop
     depends_on:
       - elasticsearch
-    deploy:
-      mode: replicated
-      replicas: 1 
 
+  # ELK - Logstash 6.2.2
   logstash:
     image: docker.elastic.co/logstash/logstash:6.2.2
     hostname: logstash
@@ -44,10 +42,8 @@ services:
       - hadoop
     depends_on:
       - elasticsearch
-    deploy:
-      mode: replicated
-      replicas: 1
 
+  # Hadoop HDFS Master node
   hadoop_master:
     build: 
       context: ../nbaTrends-hadoop/docker
@@ -62,6 +58,65 @@ services:
       - hadoop
       - elasticsearch
 
+  # Hadoop HDFS Worker node
+  hadoop_worker:
+    build: 
+      context: ../nbaTrends-hadoop/docker
+    command: ["worker"]
+    hostname: hdfs-master
+    depends_on:
+      - logstash
+      - kibana
+      - hadoop_master
+    deploy:
+      mode: replicated
+      replicas: 2
+    networks:
+      - hadoop
+      - elasticsearch
+
+  # Spark Master Node
+  spark_master:
+    build:
+      context: ../nbaTrends-jobs
+      dockerfile: docker/Dockerfile-spark
+    command: ['master']
+    hostname: spark-master
+    ports: 
+      - 30000:8080
+    networks:
+      - elasticsearch
+      - hadoop
+
+  # Spark Worker Node
+  spark_worker:
+    build:
+      context: ../nbaTrends-jobs
+      dockerfile: docker/Dockerfile-spark
+    command: ['worker']
+    depends_on: 
+      - spark_master
+    deploy:
+      mode: replicated
+      replicas: 2
+    networks:
+      - elasticsearch
+      - hadoop
+
+  # PySpark Jobs 
+  jobs:
+    build:
+      context: ../nbaTrends-jobs
+      dockerfile: docker/Dockerfile-jobs
+    depends_on:
+      - spark_master
+      - hadoop_master
+    networks:
+      - elasticsearch
+      - hadoop
+      
+
+# Net Configs
 networks:
   elasticsearch:
     external:

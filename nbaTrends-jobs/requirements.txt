@@ -1,0 +1,6 @@
+beautifulsoup4==4.6.0
+bs4==0.0.1
+configparser==3.5.0
+pyspark==2.3.0
+python-crontab==2.2.8
+requests==2.18.4

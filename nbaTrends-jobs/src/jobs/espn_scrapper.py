@@ -21,8 +21,8 @@ from src.jobs.base_job import BaseJob
 
 logger = get_logger(__name__)
 
-@cronjob(config='')
+@cronjob(lambda job: job.minute.every(2))
 class ESPNScrapperJob(BaseJob):
 
-    def run(sc):
+    def run(self, sc):
         logger.info('Connecting to ESPN.com')
