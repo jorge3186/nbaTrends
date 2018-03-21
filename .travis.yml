@@ -4,7 +4,7 @@ python:
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get -qq curl gzip tar
+  - sudo apt-get install -qq curl gzip tar
 
 install:
  - pip install -r nbaTrends-jobs/requirements.txt
