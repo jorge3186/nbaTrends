@@ -22,6 +22,7 @@ class ConfUtilsTests(unittest.TestCase):
 
     def setUp(self):
         """Reset Conf Utils file path to point to test resources config"""
+        config_utils.config_file_path = config_file_path
         config_utils.conf.read(config_file_path)
 
     def test_get_string_item(self):
