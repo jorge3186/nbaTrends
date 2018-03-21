@@ -16,8 +16,9 @@ __maintainer__ = "Jordan Alphonso"
 __email__ = "jordanalphonso1@yahoo.com"
 
 from src.utils import config_utils
-from crontab import CronTab
 
+from crontab import CronTab
+import os
 
 class SchedContext(object):
 

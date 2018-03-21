@@ -17,8 +17,6 @@ __email__ = "jordanalphonso1@yahoo.com"
 from src.utils.logger import get_logger
 from src.sched.sched_context import SchedContext
 
-import os
-
 logger = get_logger(__name__)
 
 

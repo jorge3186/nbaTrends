@@ -31,21 +31,21 @@ class BaseJob(object):
         """
         self.job_name = name
 
-    def pre_run(self, sc):
+    def pre_run(self, spark):
         """Pre Hook for any necessary setup or executions that need to be done
             prior to job execution.
             :param sc - Spark Context
         """
         pass
 
-    def on_complete(self, sc, success):
+    def on_complete(self, spark, success):
         """Post Hook execution for any necessary post conditions that need to be
             applied after a job has been completed.
             :param sc - Spark Context
         """
         pass
 
-    def run(self, sc):
+    def run(self, spark):
         """Job Execution Step. 
         """
         pass

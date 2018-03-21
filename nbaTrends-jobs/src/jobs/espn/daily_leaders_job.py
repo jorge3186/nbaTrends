@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-    Scraper Job The gathers leaders information
+    Scraper Job The gathers stat leaders
     from espn.com on a daily basis
 """
 
@@ -20,6 +20,7 @@ from src.utils.avro_utils import AvroUtils
 
 from pyspark.sql import *
 from pyspark.sql.types import *
+from datetime import datetime
 
 
 logger = get_logger(__name__)
@@ -63,6 +64,8 @@ class DailyLeadersJob(BaseJob):
             title_el = DriverUtil.find_by_xpath(self.driver, '//div[@class="mod-header stathead"]/h4')[0]\
                 .get_attribute('innerHTML')
 
+            # add date field to headers
+            stat_names.append('date')
             page_name = str(title_el).split(' ')[0].lower()
 
             stat_data = []
@@ -76,12 +79,12 @@ class DailyLeadersJob(BaseJob):
                 else:
                     done = True
 
-            # create dataframe form stat data
+            # create dataframe form stat data then save to hdfs
             stat_df = spark.createDataFrame(stat_data, stat_names)
             AvroUtils.avro_to_hdfs(stat_df, '/stats/leaders/'.join([page_name, '.avro']))
 
 
-    def on_complete(self, sc, success):
+    def on_complete(self, spark, success):
         """Clean up webdriver when finished"""
         if success:
             logger.info('Successfully collected leader data from espn.com')
@@ -93,7 +96,8 @@ class DailyLeadersJob(BaseJob):
 
     def get_player_rows(self):
         """
-            Get all rows with player stats
+            Get all rows with player stats.
+            Add an additional column to store today's date.
 
             :return: rows of player data    
         """
@@ -108,5 +112,6 @@ class DailyLeadersJob(BaseJob):
                     r.append(val)
                 else:
                     r.append(DriverUtil.find_by_xpath(row, '//td'))[0].get_attribute('innerHTML')
+            r.append(datetime.now().strftime('%Y-%m-%d'))
             data_rows.append(r)
         return data_rows

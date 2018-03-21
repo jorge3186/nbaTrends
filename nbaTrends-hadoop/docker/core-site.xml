@@ -5,8 +5,4 @@
         <value>hdfs://hdfs-master:57199</value>
     </property>
 
-    <property>
-        <name></name>
-    </property>
-
 </configuration>

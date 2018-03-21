@@ -47,12 +47,13 @@ ADD ./docker/entrypoint-spark.sh /root/scripts/entrypoint.sh
 RUN chmod +x /root/scripts/entrypoint.sh
 
 # chrome
-ADD ./google-chrome.repo /etc/yum.repos.default
-RUN yum -y update
-RUN yum install -y google-chrome-stable
+RUN curl -v -j -k -L -O 'https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm'
+RUN yum install -y ./google-chrome-stable_current_x86_64.rpm
+RUN rm -f google-chrome-stable_current_x86_64.rpm
+RUN yum install -y zip unzip
 RUN curl -v -j -k -L -O https://chromedriver.storage.googleapis.com/2.37/chromedriver_linux64.zip
 RUN unzip chromedriver_linux64.zip -d /opt/chromedriver
-RUN ln -s /opt/chromedriver/chromedriver /usr/bin/chromedriver/chromedriver
+RUN ln -s /opt/chromedriver/chromedriver /usr/bin/chromedriver
 
 # filebeat
 ADD ./docker/filebeat-spark.yml /usr/share/filebeat/filebeat.yml
