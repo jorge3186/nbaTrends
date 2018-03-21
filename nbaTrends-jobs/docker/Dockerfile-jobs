@@ -33,7 +33,7 @@ ENV JAVA_HOME /usr/java/default
 ENV PATH $PATH:$JAVA_HOME/bin
 RUN rm /usr/bin/java && ln -s $JAVA_HOME/bin/java /usr/bin/java
 
-# Spark 2.3
+# Spark 2.3 / Hadoop 2.7
 RUN curl -v -j -k -L -O 'http://apache.claz.org/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz'
 RUN tar -xzf spark-2.3.0-bin-hadoop2.7.tgz
 RUN cp -R spark-2.3.0-bin-hadoop2.7 /usr/local
@@ -41,6 +41,15 @@ RUN rm -rf spark-2.3.0-bin-hadoop2.7
 RUN rm -f spark-2.3.0-bin-hadoop2.7.tgz
 RUN cd /usr/local && ln -s ./spark-2.3.0-bin-hadoop2.7 /usr/local/spark
 ENV PATH $PATH:/usr/local/spark/bin
+
+# Avro 1.8.2
+RUN curl -v -j -k -L -O 'http://apache.claz.org/avro/avro-1.8.2/py3/avro-python3-1.8.2.tar.gz'
+RUN tar -xzf avro-python3-1.8.2.tar.gz
+RUN cp -R avro-python3-1.8.2 /usr/local
+RUN rm -rf avro-python3-1.8.2
+RUN rm -f avro-python3-1.8.2.tar.gz
+RUN cd usr.local && ln -s ./avro-python3-1.8.2 /usr/local/avro
+RUN cd /usr/local/avro && python3.6 setup.py install
 
 RUN mkdir /root/scripts
 COPY ./docker/entrypoint-jobs.sh /root/scripts/entrypoint.sh

@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 """
-    Jobs
-
-    Root Package for all Jobs
+    Spark Utilities for help with
+    job executions.
 """
 
 __author__ = "Jordan Alphonso"
@@ -11,13 +10,8 @@ __credits__ = ["Jordan Alphonso"]
 __license__ = "GPL"
 __version__ = "0.0.1"
 __maintainer__ = "Jordan Alphonso"
-__email__ = "jordanalphonso1@yahoo.com"
 
-from src.jobs.espn.daily_leaders_job import DailyLeadersJob
 
-__all__ = [
-    # ESPN.com
-    "DailyLeadersJob"
+class SparkUtils(object):
 
-    # NBA.com
-]
+    pass

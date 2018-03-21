@@ -22,14 +22,36 @@ from crontab import CronTab
 class SchedContext(object):
 
     def __init__(self):
+        """Initialize crontab and store in local variable 'cron'"""
         self.cron = CronTab(user=config_utils.get_config_string('user', 'Crontab'))
 
-    def add_job(self, job, sched):
+    def add_job(self, job, create_log=True, sched=None):
+        """Add job to the crontab context"""
+        cmd = 'spark-submit'
+        packages = config_utils.get_config_string('packages', 'Spark')
+        if packages is not None:
+            cmd += ' --packages %s' % packages
+
+        cmd+= ' /root/nbaTrends/src/main.py ' + job.__name__ 
+        if create_log:
+            cmd_log = '/var/log/crontab/' + job.__name__ + '.log'
+            cmd += ' >> ' + cmd_log
+
+            if not os.path.exists(cmd_log):
+                os.makedirs(os.path.dirname(cmd_log))
+                with open(cmd_log, 'w+'): pass
+
+        j = self.cron.new(command=cmd)
+        j.comment = job.__name__
+
+        if sched is not None:
+            sched(j)
+        self.cron.write()
         return self
 
-    def get_job_sched(self, job):
+    def remove_job(self, jobname):
+        """Remove the current job from
+            crontab for the given user
+        """
+        self.cron.remove_all(comment=jobname)
         return self
-
-    def has_job(self, job):
-
-        return False
