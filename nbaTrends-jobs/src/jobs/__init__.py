@@ -14,10 +14,12 @@ __maintainer__ = "Jordan Alphonso"
 __email__ = "jordanalphonso1@yahoo.com"
 
 from src.jobs.espn.daily_leaders_job import DailyLeadersJob
+from src.jobs.espn.daily_stories_job import DailyStoriesJob
 
 __all__ = [
     # ESPN.com
-    "DailyLeadersJob"
+    "DailyLeadersJob",
+    "DailyStoriesJob"
 
     # NBA.com
 ]

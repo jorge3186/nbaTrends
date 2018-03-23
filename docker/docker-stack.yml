@@ -67,6 +67,9 @@ services:
       - logstash
       - kibana
       - hdfsmaster
+    deploy:
+      mode: replicated
+      replicas: 2
     networks:
       - hadoop
       - elasticsearch
@@ -92,6 +95,9 @@ services:
     command: ['worker']
     depends_on: 
       - sparkmaster
+    deploy:
+      mode: replicated
+      replicas: 2
     networks:
       - elasticsearch
       - hadoop

@@ -21,7 +21,4 @@ nbaTrends-jobs/pip-selfcheck.json
 # logs
 nbaTrends-jobs/logs/
 
-# config files (specific to each machine)
-nbaTrends-jobs/nbaTrends/resources/config.ini
-
 ghostdriver.log

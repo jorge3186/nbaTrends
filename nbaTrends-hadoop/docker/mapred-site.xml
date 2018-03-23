@@ -2,7 +2,7 @@
 
     <property>
         <name>mapred.job.tracker</name>
-        <value>hdfs-master:57198</value>
+        <value>hdfsmaster:57198</value>
     </property>
 
 </configuration>

@@ -55,7 +55,6 @@ COPY ./hdfs-site.xml $HADOOP_CONF_DIR/hdfs-site.xml
 COPY ./mapred-site.xml $HADOOP_CONF_DIR/mapred-site.xml
 
 COPY ./entrypoint.sh /root
-RUN echo "rootroot\nrootroot" | (passwd --stdin root)
 RUN chmod +x /root/entrypoint.sh
 
 RUN sed -i 's/# export JAVA_HOME=/export JAVA_HOME=\/usr\/java\/default/' $HADOOP_CONF_DIR/hadoop-env.sh
