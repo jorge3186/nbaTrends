@@ -35,7 +35,7 @@ services:
         source: ./logstash.conf
         target: /usr/share/logstash/pipeline/logstash.conf
     ports:
-      - 5000:5000
+      - 5000
       - 5044:5044
     networks:
       - elasticsearch
@@ -50,7 +50,7 @@ services:
     command: ["master"]
     hostname: hdfsmaster
     ports:
-      - 9870:9870
+      - 50070:50070
     depends_on:
       - logstash
       - kibana

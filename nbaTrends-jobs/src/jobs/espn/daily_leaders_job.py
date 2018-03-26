@@ -63,11 +63,11 @@ class DailyLeadersJob(SeleniumJob):
             titles = DriverUtil.find_by_xpath(self.driver, '(//tr[@class="colhead"])[1]//td')
             for title in titles:
                 if DriverUtil.find_by_xpath(title, '//a[contains(@href, "statistics")]') is not None:
-                    inner_el = DriverUtil.find_by_xpath(title, '//a[contains(@href, "statistics")]')
-                    title_names.append(inner_el.get_attribute('innerHTML'))
+                    inner_el = DriverUtil.find_by_xpath(title, '//a[contains(@href, "statistics")]')[0]
+                    stat_names.append(inner_el.get_attribute('innerHTML'))
                 else:
-                    title_names.append(title.get_attribute('innerHTML'))
-            logger.info('Titles: ' + title_names)
+                    stat_names.append(title.get_attribute('innerHTML'))
+            logger.info('Titles: ' + stat_names)
             title_el = DriverUtil.find_by_xpath(self.driver, '//div[@class="mod-header stathead"]/h4')[0]\
                 .get_attribute('innerHTML')
 

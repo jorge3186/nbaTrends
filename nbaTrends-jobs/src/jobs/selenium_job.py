@@ -14,7 +14,7 @@ __version__ = "0.0.1"
 __maintainer__ = "Jordan Alphonso"
 
 from src.jobs.base_job import BaseJob
-from src.utils.webdriver_util import get_driver()
+from src.utils.webdriver_util import get_driver
 from src.utils.logger import get_logger
 
 

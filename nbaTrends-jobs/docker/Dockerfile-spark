@@ -59,6 +59,8 @@ RUN ln -s /opt/chromedriver/chromedriver /usr/bin/chromedriver
 ADD ./docker/filebeat-spark.yml /usr/share/filebeat/filebeat.yml
 RUN chown root:filebeat /usr/share/filebeat/filebeat.yml
 
+WORKDIR /root/nbaTrends
+
 # spark ports
 EXPOSE 8080 7077
 

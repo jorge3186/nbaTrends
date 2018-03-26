@@ -3,6 +3,10 @@
 # start ssh
 /usr/sbin/sshd
 
+#reset localhost keys
+ssh-keygen -R localhost
+ssh-keyscan -H localhost >> ~/.ssh/known_hosts
+
 # start crontab
 /usr/sbin/crond
 
@@ -11,8 +15,14 @@
 
 # start spark
 if [ "$1" == "master" ]; then
-    python -m src.scheduler
-    sleep infinity
+	ssh-keygen -R sparkmaster
+    ssh-keygen -R 0.0.0.0
+    ssh-keyscan -H sparkmaster >> ~/.ssh/known_hosts
+    ssh-keyscan -H 0.0.0.0 >> ~/.ssh/known_hosts
+
+    /usr/local/spark/sbin/start-master.sh
 else
-    /usr/local/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    /usr/local/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://sparkmaster:7077
 fi
+
+sleep infinity

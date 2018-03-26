@@ -21,7 +21,7 @@ if not os.path.exists(log_path):
     l = open(log_path, "w+")
     l.close()
 
-formatter = logging.Formatter('[[ %(asctime)s :: %(funcName)s@%(filename)s :: %(levelname)-5.5s]] %(message)s')
+formatter = logging.Formatter('[[ %(asctime)s :: %(funcName)s@%(filename)s:%(lineno)d :: %(levelname)-5.5s]] %(message)s')
 
 file_handler = logging.FileHandler(log_path)
 file_handler.setLevel(logging.INFO)
