@@ -62,18 +62,21 @@ class DailyLeadersJob(SeleniumJob):
             stat_names = []
             titles = DriverUtil.find_by_xpath(self.driver, '(//tr[@class="colhead"])[1]//td')
             for title in titles:
-                if DriverUtil.find_by_xpath(title, '//a[contains(@href, "statistics")]') is not None:
-                    inner_el = DriverUtil.find_by_xpath(title, '//a[contains(@href, "statistics")]')[0]
-                    stat_names.append(inner_el.get_attribute('innerHTML'))
-                else:
-                    stat_names.append(title.get_attribute('innerHTML'))
-            logger.info('Titles: ' + stat_names)
+                el_text = title.get_attribute('innerHTML')
+                if '<a' in el_text:
+                    el_text = DriverUtil.find_by_xpath(title, './/a')[0].get_attribute('innerHTML')
+                elif '<span' in el_text:
+                    el_text = DriverUtil.find_by_xpath(title, './/span')[0].get_attribute('innerHTML')
+                stat_names.append(el_text)
+            
             title_el = DriverUtil.find_by_xpath(self.driver, '//div[@class="mod-header stathead"]/h4')[0]\
                 .get_attribute('innerHTML')
 
             # add date field to headers
             stat_names.append('date')
             page_name = str(title_el).split(' ')[0].lower()
+            logger.info(':::: %s titles ::::' % page_name)
+            logger.info(stat_names)
 
             stat_data = []
             done = False
@@ -81,8 +84,8 @@ class DailyLeadersJob(SeleniumJob):
                 stat_data += self.get_player_rows()
                 # go to next page
                 next_page_btn = DriverUtil.find_by_xpath(self.driver, '//div[@class="jcarousel-next"]')
-                if next_page_btn is not None:
-                    next_page_btn.click()
+                if len(next_page_btn) > 0:
+                    next_page_btn[0].click()
                 else:
                     done = True
 
@@ -101,13 +104,13 @@ class DailyLeadersJob(SeleniumJob):
         player_rows = DriverUtil.find_by_xpath(self.driver, '//tr[contains(@class, "player")]')
         for row in player_rows:
             r = []
-            for el in DriverUtil.find_by_xpath(row, '//td'):
-                if DriverUtil.find_by_xpath(el, '//a[contains(@href, "/nba/player")]') is not None:
-                    val = DriverUtil.find_by_xpath(el, '//a[contains(@href, "/nba/player")]')[0]\
+            for el in DriverUtil.find_by_xpath(row, './/td'):
+                if len(DriverUtil.find_by_xpath(el, './/a[contains(@href, "/nba/player")]')) > 0:
+                    val = DriverUtil.find_by_xpath(el, './/a[contains(@href, "/nba/player")]')[0]\
                         .get_attribute('innerHTML')
                     r.append(val)
                 else:
-                    r.append(DriverUtil.find_by_xpath(row, '//td'))[0].get_attribute('innerHTML')
+                    r.append(DriverUtil.find_by_xpath(row, './/td'))[0].get_attribute('innerHTML')
             r.append(datetime.now().strftime('%Y-%m-%d'))
             data_rows.append(r)
         return data_rows
