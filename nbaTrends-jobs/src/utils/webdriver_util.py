@@ -16,6 +16,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
+
 def get_driver():
     """
         Create a webdriver using chrome and
@@ -23,6 +24,7 @@ def get_driver():
     """
     opts = Options()
     opts.add_argument('--headless')
+    opts.add_argument('--no-sandbox')
     return webdriver.Chrome(chrome_options=opts,\
         executable_path=get_config_string('chromedriver_path', 'Selenium'))
 
