@@ -22,9 +22,8 @@ from src.utils.webdriver_util import get_driver
 from src.utils.webdriver_util import DriverUtil
 from src.utils.avro_utils import AvroUtils
 
-from pyspark.sql import *
-from pyspark.sql.types import *
 from datetime import datetime
+import time
 
 
 logger = get_logger(__name__)
@@ -45,6 +44,7 @@ class DailyLeadersJob(SeleniumJob):
         """
         self.driver.get('http://espn.com/nba/statistics')
         logger.info('Navigated to espn.com/nba/statistics')
+        time.sleep(8)
 
         # get stat links
         stat_links = DriverUtil.find_by_xpath(self.driver, \
@@ -56,11 +56,14 @@ class DailyLeadersJob(SeleniumJob):
 
         for link in links:
             self.driver.get(link)
-            logger.info('Navigated to Stat: %s' % link)
+            logger.info('Navigated to Stat Page: %s' % link)
+            time.sleep(5)
 
             # title row
             stat_names = []
             titles = DriverUtil.find_by_xpath(self.driver, '(//tr[@class="colhead"])[1]//td')
+            time.sleep(5)
+
             for title in titles:
                 el_text = title.get_attribute('innerHTML')
                 if '<a' in el_text:
@@ -75,23 +78,28 @@ class DailyLeadersJob(SeleniumJob):
             # add date field to headers
             stat_names.append('date')
             page_name = str(title_el).split(' ')[0].lower()
+            if 'field' in page_name:
+                page_name = 'field_goal_pct'
+
             logger.info(':::: %s titles ::::' % page_name)
             logger.info(stat_names)
 
-            stat_data = []
-            done = False
-            while not done:
-                stat_data += self.get_player_rows()
-                # go to next page
-                next_page_btn = DriverUtil.find_by_xpath(self.driver, '//div[@class="jcarousel-next"]')
-                if len(next_page_btn) > 0:
-                    next_page_btn[0].click()
-                else:
-                    done = True
+            if '&nbsp;' not in stat_names:
+                stat_data = []
+                done = False
+                while not done:
+                    stat_data += self.get_player_rows()
+                    # go to next page
+                    next_page_btn = DriverUtil.find_by_xpath(self.driver, '//div[@class="jcarousel-next"]')
+                    if len(next_page_btn) > 0:
+                        self.driver.execute_script('arugments[0].click()', next_page_btn[0])
+                        time.sleep(5)
+                    else:
+                        done = True
 
-            # create dataframe form stat data then save to hdfs
-            stat_df = spark.createDataFrame(stat_data, stat_names)
-            AvroUtils.avro_to_hdfs(stat_df, '/stats/leaders/'.join([page_name, '.avro']))
+                # create dataframe form stat data then save to hdfs
+                stat_df = spark.createDataFrame(stat_data, stat_names)
+                AvroUtils.avro_to_hdfs(stat_df, '/stats/leaders/'.join([page_name, '.avro']))
 
     def get_player_rows(self):
         """
@@ -105,12 +113,28 @@ class DailyLeadersJob(SeleniumJob):
         for row in player_rows:
             r = []
             for el in DriverUtil.find_by_xpath(row, './/td'):
-                if len(DriverUtil.find_by_xpath(el, './/a[contains(@href, "/nba/player")]')) > 0:
-                    val = DriverUtil.find_by_xpath(el, './/a[contains(@href, "/nba/player")]')[0]\
-                        .get_attribute('innerHTML')
-                    r.append(val)
-                else:
-                    r.append(DriverUtil.find_by_xpath(row, './/td'))[0].get_attribute('innerHTML')
+                el_text = el.get_attribute('innerHTML')
+                if '<a' in el_text:
+                    el_text = DriverUtil.find_by_xpath(el, './/a')[0].get_attribute('innerHTML')
+
+                r.append(str(el_text).replace('&nbsp;', ''))
             r.append(datetime.now().strftime('%Y-%m-%d'))
             data_rows.append(r)
+        self.fix_rank_ties(data_rows)
         return data_rows
+
+    def fix_rank_ties(data_rows):
+        """
+            Iterate through the player rows, looking for empty ranks.
+            If an empty rank is found then it gets the previous row's rank
+            and marks it that same rank prefixed with 'T-'
+        """
+        prev_rank = None
+        for i, row in enumerate(data_rows):
+            if '' == row[0] and prev_rank is not None:
+                row[0] = data_rows[i-1][0]
+                if 'T-' not in row[0]:
+                    row[0] = 'T-' + row[0]
+                    data_rows[i-1][0] = row[0]
+            prev_rank = row[0]
+
