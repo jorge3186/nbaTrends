@@ -60,7 +60,7 @@ class AvroUtils(object):
         """
         if append_timestamp:
             ts = datetime.now().strftime('%Y%m%d%H%M%S')
-            file_path = str(file_path).replace('.avro', (ts + '.avro'))
+            file_path = str(file_path).replace('.avro', ('_' + ts + '.avro'))
 
         f = config_utils.get_config_string('hdfs_home', 'Hadoop') + file_path
         logger.info('Saving HDFS Avro File :: %s' % f)
