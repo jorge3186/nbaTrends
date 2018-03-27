@@ -92,7 +92,7 @@ class DailyLeadersJob(SeleniumJob):
                     # go to next page
                     next_page_btn = DriverUtil.find_by_xpath(self.driver, '//div[@class="jcarousel-next"]')
                     if len(next_page_btn) > 0:
-                        self.driver.execute_script('arugments[0].click()', next_page_btn[0])
+                        self.driver.execute_script('arguments[0].click()', next_page_btn[0])
                         time.sleep(5)
                     else:
                         done = True
@@ -123,7 +123,7 @@ class DailyLeadersJob(SeleniumJob):
         self.fix_rank_ties(data_rows)
         return data_rows
 
-    def fix_rank_ties(data_rows):
+    def fix_rank_ties(self, data_rows):
         """
             Iterate through the player rows, looking for empty ranks.
             If an empty rank is found then it gets the previous row's rank

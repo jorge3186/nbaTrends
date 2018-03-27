@@ -56,8 +56,10 @@ class AvroUtils(object):
                 Format is %Y%m%d%H%M%S
         """
         if append_timestamp:
-            ts = datetime.no().strftime('%Y%m%d%H%M%S')
+            ts = datetime.now().strftime('%Y%m%d%H%M%S')
             file_path = str(file_path).replace('.avro', '.'.join([ts, '.avro']))
 
         df.write.format('com.databricks.spark.avro').save(\
             config_utils.get_config_string('hdfs_home', 'Hadoop') + file_path)
+
+        
