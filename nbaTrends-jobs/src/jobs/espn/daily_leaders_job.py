@@ -99,7 +99,7 @@ class DailyLeadersJob(SeleniumJob):
 
                 # create dataframe form stat data then save to hdfs
                 stat_df = spark.createDataFrame(stat_data, stat_names)
-                AvroUtils.avro_to_hdfs(stat_df, '/stats/leaders/'.join([page_name, '.avro']))
+                AvroUtils.avro_to_hdfs(stat_df, '/stats/leaders/' + page_name + '.avro')
 
     def get_player_rows(self):
         """

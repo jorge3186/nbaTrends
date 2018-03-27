@@ -15,12 +15,15 @@ __maintainer__ = "Jordan Alphonso"
 __email__ = "jordanalphonso1@yahoo.com"
 
 from src.utils import config_utils
+from src.utils.logger import get_logger
 
 import avro.schema
 from avro.datafile import DataFileReader, DataFileWriter
 from avro.io import DatumReader, DatumWriter
 import json
 from datetime import datetime
+
+logger = get_logger(__name__)
 
 class AvroUtils(object):
 
@@ -57,9 +60,10 @@ class AvroUtils(object):
         """
         if append_timestamp:
             ts = datetime.now().strftime('%Y%m%d%H%M%S')
-            file_path = str(file_path).replace('.avro', '.'.join([ts, '.avro']))
+            file_path = str(file_path).replace('.avro', (ts + '.avro'))
 
-        df.write.format('com.databricks.spark.avro').save(\
-            config_utils.get_config_string('hdfs_home', 'Hadoop') + file_path)
+        f = config_utils.get_config_string('hdfs_home', 'Hadoop') + file_path
+        logger.info('Saving HDFS Avro File :: %s' % f)
+        df.write.format('com.databricks.spark.avro').save(f)
+        logger.info('Avro file save complete')
 
-        
