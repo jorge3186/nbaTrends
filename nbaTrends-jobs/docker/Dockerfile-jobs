@@ -42,6 +42,10 @@ RUN rm -f spark-2.3.0-bin-hadoop2.7.tgz
 RUN cd /usr/local && ln -s ./spark-2.3.0-bin-hadoop2.7 /usr/local/spark
 ENV PATH $PATH:/usr/local/spark/bin
 
+# Add Spark Dependencies
+RUN mkdir -p /usr/local/spark/addtl_jars
+ADD ./docker/jars/* /usr/local/spark/addtl_jars
+
 # Avro 1.8.2
 RUN curl -v -j -k -L -O 'http://apache.claz.org/avro/avro-1.8.2/py3/avro-python3-1.8.2.tar.gz'
 RUN tar -xzf avro-python3-1.8.2.tar.gz
@@ -63,17 +67,14 @@ RUN ln -s /opt/chromedriver/chromedriver /usr/bin/chromedriver
 RUN mkdir /root/scripts
 COPY ./docker/entrypoint-jobs.sh /root/scripts/entrypoint.sh
 RUN chmod +x /root/scripts/entrypoint.sh
+RUN ln -sfn /usr/bin/python3.6 /usr/bin/python
 
 RUN mkdir /root/nbaTrends
 RUN mkdir /root/nbaTrends/src
 ADD ./src /root/nbaTrends/src
 ADD ./requirements.txt /root/nbaTrends
-RUN ln -sfn /usr/bin/python3.6 /usr/bin/python
 RUN pip3.6 install -r /root/nbaTrends/requirements.txt
-
-# filebeat
-ADD ./docker/filebeat-jobs.yml /usr/share/filebeat/filebeat.yml
-RUN chown root:filebeat /usr/share/filebeat/filebeat.yml
+ENV PYSPARK_PYTHON /usr/bin/python3.6
 
 WORKDIR /root/nbaTrends
 

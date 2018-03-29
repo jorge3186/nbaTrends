@@ -24,5 +24,5 @@ This is a docker service that will use web-scraper jobs to pick up various NBA I
     cd ./docker
     docker-compose up
     #or
-    docker stack deploy -c ./docker-compose.yml nbaTrends
+    docker stack deploy -c ./docker-stack.yml nbaTrends
     ```

@@ -81,8 +81,12 @@ class DailyLeadersJob(SeleniumJob):
             if 'field' in page_name:
                 page_name = 'field_goal_pct'
 
-            logger.info(':::: %s titles ::::' % page_name)
+            logger.info(':::: %s titles before correction ::::' % page_name)
             logger.info(stat_names)
+
+            adjusted_names = AvroUtils.sanitize_field_names(stat_names)
+            logger.info(':::: %s titles after correction ::::' % page_name)
+            logger.info(adjusted_names)
 
             if '&nbsp;' not in stat_names:
                 stat_data = []
@@ -98,8 +102,9 @@ class DailyLeadersJob(SeleniumJob):
                         done = True
 
                 # create dataframe form stat data then save to hdfs
-                stat_df = spark.createDataFrame(stat_data, stat_names)
-                AvroUtils.avro_to_hdfs(stat_df, '/stats/leaders/' + page_name + '.avro')
+                stat_df = spark.createDataFrame(stat_data, adjusted_names)
+                AvroUtils.avro_to_hdfs(stat_df, '/stats/leaders/' + page_name)
+
 
     def get_player_rows(self):
         """
@@ -122,6 +127,7 @@ class DailyLeadersJob(SeleniumJob):
             data_rows.append(r)
         self.fix_rank_ties(data_rows)
         return data_rows
+
 
     def fix_rank_ties(self, data_rows):
         """

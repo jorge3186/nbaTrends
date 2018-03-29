@@ -61,10 +61,6 @@ RUN sed -i 's/export JAVA_HOME=\${JAVA_HOME}/export JAVA_HOME=\/usr\/java\/defau
 RUN chmod +x $HADOOP_CONF_DIR/hadoop-env.sh
 RUN $HADOOP_CONF_DIR/hadoop-env.sh
 
-# copy filebeat config
-COPY ./filebeat.yml /usr/share/filebeat/filebeat.yml
-RUN chown root:filebeat /usr/share/filebeat/filebeat.yml
-
 # HDFS Ports
 EXPOSE 9820 9864 9865 9866 9867 9869 50070 9871 57199
 # Beats

@@ -14,8 +14,6 @@ ssh-keyscan -H 0.0.0.0 >> ~/.ssh/known_hosts
 # start crontab
 /usr/sbin/crond
 
-# start filebeat
-/usr/share/filebeat/filebeat -e -c /usr/share/filebeat/filebeat.yml &
 
 # start spark
 if [ "$1" == "master" ]; then

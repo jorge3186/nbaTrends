@@ -26,5 +26,4 @@ else
     $HADOOP_PREFIX/sbin/hadoop-daemons.sh --config $HADOOP_CONF_DIR --script hdfs start datanode
 fi
 
-# start filebeat
-/usr/share/filebeat/filebeat -e -c /usr/share/filebeat/filebeat.yml
+sleep infinity

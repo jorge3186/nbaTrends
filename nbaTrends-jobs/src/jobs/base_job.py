@@ -80,6 +80,7 @@ class BaseJob(object):
 
     def _runjob(self):
         """Internal execution of job"""
+        self.exit_code = 0
         if not hasattr(self, 'job_name'):
             self.job_name = self.__class__.__name__
 
@@ -113,10 +114,12 @@ class BaseJob(object):
             logger.error('Issue occured during execution')
             logger.error(err.args)
             successful = False
+            self.exit_code = 1
         finally:
             logger.info('Starting Post-Execution for job \'%s\'' % (self.job_name))
             self.on_complete(spark=spark, success=successful)
             logger.info('Post-Execution for job \'%s\' is complete' % (self.job_name))
 
-            if spark is not None:
+            if self.spark is not None:
                 spark.stop()
+            exit(self.exit_code)

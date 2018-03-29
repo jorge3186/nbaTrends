@@ -1,48 +1,6 @@
 version: "3.2"
 services:
 
-  # ELK - Elasticsearch 6.2.2
-  elasticsearch:
-    environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.2
-    hostname: elasticsearch
-    ports:
-      - 9200:9200
-      - 9002:9002
-      - 9003:9003
-    networks:
-      - elasticsearch
-
-  # ELK - Kibana 6.2.2
-  kibana:
-    image: docker.elastic.co/kibana/kibana:6.2.2
-    hostname: kibana
-    ports:
-      - 57000:5601
-    networks:
-      - elasticsearch
-      - hadoop
-    depends_on:
-      - elasticsearch
-
-  # ELK - Logstash 6.2.2
-  logstash:
-    image: docker.elastic.co/logstash/logstash:6.2.2
-    hostname: logstash
-    volumes:
-      - type: bind
-        source: ./logstash.conf
-        target: /usr/share/logstash/pipeline/logstash.conf
-    ports:
-      - 5000
-      - 5044:5044
-    networks:
-      - elasticsearch
-      - hadoop
-    depends_on:
-      - elasticsearch
-
   # Hadoop HDFS Master node
   hdfsmaster:
     build: 
@@ -51,12 +9,8 @@ services:
     hostname: hdfsmaster
     ports:
       - 50070:50070
-    depends_on:
-      - logstash
-      - kibana
     networks:
       - hadoop
-      - elasticsearch
 
   # Hadoop HDFS Worker node
   hadoopworker:
@@ -64,12 +18,9 @@ services:
       context: ../nbaTrends-hadoop/docker
     command: ["worker"]
     depends_on:
-      - logstash
-      - kibana
       - hdfsmaster
     networks:
       - hadoop
-      - elasticsearch
 
   # Spark Master Node
   sparkmaster:
@@ -81,7 +32,6 @@ services:
     ports: 
       - 30000:8080
     networks:
-      - elasticsearch
       - hadoop
 
   # Spark Worker Node
@@ -93,7 +43,6 @@ services:
     depends_on: 
       - sparkmaster
     networks:
-      - elasticsearch
       - hadoop
 
   # PySpark Jobs 
@@ -105,15 +54,11 @@ services:
       - sparkmaster
       - hdfsmaster
     networks:
-      - elasticsearch
       - hadoop
       
 
 # Network Configs
 networks:
-  elasticsearch:
-    external:
-      name: elasticsearch
   hadoop:
     external:
       name: hadoop
