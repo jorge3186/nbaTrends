@@ -7,11 +7,11 @@ This is a docker service that will use web-scraper jobs to pick up various NBA I
 - [Build](#build-compose)
 
     ### Network Setup
-    These 2 networks need to be created before building
-    - elasticsearch
+    This network needs to be created before building
+	- splunk
     - hadoop
 
-    These networks can either be <strong>bridge</strong> or <strong>overlay</strong> networks based on your docker swarm configuration.
+    The network can either be <strong>bridge</strong> or <strong>overlay</strong> networks based on your docker swarm configuration.
     Examples: 
     ```bash
     docker network create -d bridge splunk

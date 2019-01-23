@@ -16,11 +16,9 @@ RUN cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
 RUN mkdir /var/run/sshd
 
 # Java 1.8
-RUN curl -v -j -k -L -O -H 'Cookie: oraclelicense=accept-securebackup-cookie' http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u161-linux-x64.rpm
-RUN rpm -i jdk-8u161-linux-x64.rpm
-RUN rm -f jdk-8u161-linux-x64.rpm
+RUN yum install -y java-1.8.0-openjdk-devel
 
-ENV JAVA_HOME /usr/java/default
+ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk
 ENV PATH $PATH:$JAVA_HOME/bin
 RUN rm -f /usr/bin/java && ln -s $JAVA_HOME/bin/java /usr/bin/java
 
@@ -57,7 +55,7 @@ COPY ./mapred-site.xml $HADOOP_CONF_DIR/mapred-site.xml
 COPY ./entrypoint.sh /root
 RUN chmod +x /root/entrypoint.sh
 
-RUN sed -i 's/export JAVA_HOME=\${JAVA_HOME}/export JAVA_HOME=\/usr\/java\/default/' $HADOOP_CONF_DIR/hadoop-env.sh
+RUN sed -i 's/export JAVA_HOME=\${JAVA_HOME}/export JAVA_HOME=\/usr\/lib\/jvm\/java-1.8.0-openjdk/' $HADOOP_CONF_DIR/hadoop-env.sh
 RUN chmod +x $HADOOP_CONF_DIR/hadoop-env.sh
 RUN $HADOOP_CONF_DIR/hadoop-env.sh
 

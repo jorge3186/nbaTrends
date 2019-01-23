@@ -18,8 +18,6 @@ from src.utils import config_utils
 from src.utils.logger import get_logger
 
 import avro.schema
-from avro.datafile import DataFileReader, DataFileWriter
-from avro.io import DatumReader, DatumWriter
 import json
 from datetime import datetime
 import re
@@ -99,7 +97,7 @@ class AvroUtils(object):
 
         f = config_utils.get_config_string('hdfs_home', 'Hadoop') + file_path
         logger.info('Saving HDFS Avro File :: %s' % f)
-        df.write.format('com.databricks.spark.avro').save(f)
+        df.write.format('avro').save(f)
         logger.info('Avro file save complete')
 
 
