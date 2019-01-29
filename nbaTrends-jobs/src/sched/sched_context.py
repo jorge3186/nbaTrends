@@ -33,7 +33,7 @@ class SchedContext(object):
         if packages is not None:
             cmd += ' --packages %s' % packages
 
-        cmd+= ' /root/nbaTrends/src/main.py ' + job.__name__ 
+        cmd+= ' /sbin/nbaTrends/src/main.py ' + job.__name__ 
         if create_log:
             cmd_log = '/var/log/crontab/' + job.__name__ + '.log'
             cmd += ' >> ' + cmd_log

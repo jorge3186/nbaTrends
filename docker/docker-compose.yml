@@ -1,6 +1,19 @@
 version: "3.2"
 services:
 
+  # Splunk Enterprise
+  splunk:
+    image: "splunk/splunk:7.2"
+    hostname: splunk
+    ports:
+      - 31000:8000
+    networks:
+      - hadoop
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_USER=root
+      - SPLUNK_PASSWORD=securepassword
+
   # Hadoop HDFS Master node
   hdfsmaster:
     build: 
@@ -11,6 +24,12 @@ services:
       - 50070:50070
     networks:
       - hadoop
+    depends_on:
+      - splunk
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_USER=root
+      - SPLUNK_PASSWORD=securepassword
 
   # Hadoop HDFS Worker node
   hadoopworker:
@@ -21,40 +40,60 @@ services:
       - hdfsmaster
     networks:
       - hadoop
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_USER=root
+      - SPLUNK_PASSWORD=securepassword
 
   # Spark Master Node
   sparkmaster:
     build:
       context: ../nbaTrends-jobs
-      dockerfile: docker/Dockerfile-spark
+      dockerfile: ./docker/Dockerfile
     command: ['master']
     hostname: sparkmaster
     ports: 
       - 30000:8080
     networks:
       - hadoop
+    depends_on:
+      - splunk
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_USER=root
+      - SPLUNK_PASSWORD=securepassword
 
   # Spark Worker Node
   sparkworker:
     build:
       context: ../nbaTrends-jobs
-      dockerfile: docker/Dockerfile-spark
+      dockerfile: ./docker/Dockerfile
     command: ['worker']
     depends_on: 
       - sparkmaster
+      - splunk
     networks:
       - hadoop
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_USER=root
+      - SPLUNK_PASSWORD=securepassword
 
   # PySpark Jobs 
   jobs:
     build:
       context: ../nbaTrends-jobs
-      dockerfile: docker/Dockerfile-jobs
+      dockerfile: ./docker/Dockerfile
+    command: ['jobs']
     depends_on:
       - sparkmaster
       - hdfsmaster
     networks:
       - hadoop
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_USER=root
+      - SPLUNK_PASSWORD=securepassword
       
 
 # Network Configs

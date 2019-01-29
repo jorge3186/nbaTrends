@@ -1,47 +1,18 @@
 version: "3.2"
 services:
 
-  # ELK - Elasticsearch 6.2.2
-  elasticsearch:
+  # Splunk Enterprise
+  splunk:
+    image: "splunk/splunk:7.2"
+    hostname: splunk
+    ports:
+      - 31000:8000
+    networks:
+      - hadoop
     environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.2
-    hostname: elasticsearch
-    ports:
-      - 9200:9200
-      - 9002:9002
-      - 9003:9003
-    networks:
-      - elasticsearch
-
-  # ELK - Kibana 6.2.2
-  kibana:
-    image: docker.elastic.co/kibana/kibana:6.2.2
-    hostname: kibana
-    ports:
-      - 57000:5601
-    networks:
-      - elasticsearch
-      - hadoop
-    depends_on:
-      - elasticsearch
-
-  # ELK - Logstash 6.2.2
-  logstash:
-    image: docker.elastic.co/logstash/logstash:6.2.2
-    hostname: logstash
-    volumes:
-      - type: bind
-        source: ./logstash.conf
-        target: /usr/share/logstash/pipeline/logstash.conf
-    ports:
-      - 5000
-      - 5044:5044
-    networks:
-      - elasticsearch
-      - hadoop
-    depends_on:
-      - elasticsearch
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_USER=root
+      - SPLUNK_PASSWORD=securepassword
 
   # Hadoop HDFS Master node
   hdfsmaster:
@@ -51,75 +22,90 @@ services:
     hostname: hdfsmaster
     ports:
       - 50070:50070
-    depends_on:
-      - logstash
-      - kibana
     networks:
       - hadoop
-      - elasticsearch
+    depends_on:
+      - splunk
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_USER=root
+      - SPLUNK_PASSWORD=securepassword
 
   # Hadoop HDFS Worker node
   hadoopworker:
     build: 
-      context: ../nbaTrends-hadoop/docker
+      context: ../nbaTrends-hadoop
+      dockerfile: ./docker/Dockerfile
     command: ["worker"]
     depends_on:
-      - logstash
-      - kibana
       - hdfsmaster
+      - splunk
+    networks:
+      - hadoop
     deploy:
       mode: replicated
       replicas: 2
-    networks:
-      - hadoop
-      - elasticsearch
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_USER=root
+      - SPLUNK_PASSWORD=securepassword
 
   # Spark Master Node
   sparkmaster:
     build:
       context: ../nbaTrends-jobs
-      dockerfile: docker/Dockerfile-spark
+      dockerfile: ./docker/Dockerfile
     command: ['master']
     hostname: sparkmaster
     ports: 
       - 30000:8080
     networks:
-      - elasticsearch
       - hadoop
+    depends_on:
+      - splunk
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_USER=root
+      - SPLUNK_PASSWORD=securepassword
 
   # Spark Worker Node
   sparkworker:
     build:
       context: ../nbaTrends-jobs
-      dockerfile: docker/Dockerfile-spark
+      dockerfile: ./docker/Dockerfile
     command: ['worker']
     depends_on: 
       - sparkmaster
+      - splunk
     deploy:
       mode: replicated
       replicas: 2
     networks:
-      - elasticsearch
       - hadoop
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_USER=root
+      - SPLUNK_PASSWORD=securepassword
 
   # PySpark Jobs 
   jobs:
     build:
-      context: ../nbaTrends-jobs
-      dockerfile: docker/Dockerfile-jobs
+      context: ../nbaTrends-jobs/docker
+    command: ['jobs']
     depends_on:
       - sparkmaster
       - hdfsmaster
+      - splunk
     networks:
-      - elasticsearch
       - hadoop
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_USER=root
+      - SPLUNK_PASSWORD=securepassword
       
 
 # Network Configs
 networks:
-  elasticsearch:
-    external:
-      name: elasticsearch
   hadoop:
     external:
       name: hadoop

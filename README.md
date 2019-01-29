@@ -8,13 +8,12 @@ This is a docker service that will use web-scraper jobs to pick up various NBA I
 
     ### Network Setup
     This network needs to be created before building
-	- splunk
     - hadoop
 
     The network can either be <strong>bridge</strong> or <strong>overlay</strong> networks based on your docker swarm configuration.
     Examples: 
     ```bash
-    docker network create -d bridge splunk
+    docker network create -d bridge hadoop
     docker network create -d overlay hadoop
     ```
 

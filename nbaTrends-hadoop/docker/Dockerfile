@@ -1,24 +1,22 @@
-FROM docker.elastic.co/beats/filebeat:6.2.2
+FROM splunk/universalforwarder:7.2
 
 USER root
 
-RUN yum clean all; \
-    yum install -y curl which tar sudo openssh-server openssh-clients rsync
-
-RUN yum -y update
-RUN yum install -y initscripts && yum clean all
+RUN apt-get update
+RUN apt-get install openssh-server -y
+RUN apt-get install curl -y
 
 # enable ssh
-RUN ssh-keygen -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
-RUN ssh-keygen -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key
-RUN ssh-keygen -N "" -t rsa -f /root/.ssh/id_rsa
+RUN echo y | ssh-keygen -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
+RUN echo y | ssh-keygen -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key
+RUN echo y | ssh-keygen -N "" -t rsa -f /root/.ssh/id_rsa
 RUN cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
-RUN mkdir /var/run/sshd
 
 # Java 1.8
-RUN yum install -y java-1.8.0-openjdk-devel
+RUN mkdir /usr/share/man/man1
+RUN apt-get install openjdk-8-jdk -y
 
-ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV PATH $PATH:$JAVA_HOME/bin
 RUN rm -f /usr/bin/java && ln -s $JAVA_HOME/bin/java /usr/bin/java
 
@@ -55,7 +53,7 @@ COPY ./mapred-site.xml $HADOOP_CONF_DIR/mapred-site.xml
 COPY ./entrypoint.sh /root
 RUN chmod +x /root/entrypoint.sh
 
-RUN sed -i 's/export JAVA_HOME=\${JAVA_HOME}/export JAVA_HOME=\/usr\/lib\/jvm\/java-1.8.0-openjdk/' $HADOOP_CONF_DIR/hadoop-env.sh
+RUN sed -i 's/export JAVA_HOME=\${JAVA_HOME}/export JAVA_HOME=\/usr\/lib\/jvm\/java-8-openjdk-amd64/' $HADOOP_CONF_DIR/hadoop-env.sh
 RUN chmod +x $HADOOP_CONF_DIR/hadoop-env.sh
 RUN $HADOOP_CONF_DIR/hadoop-env.sh
 

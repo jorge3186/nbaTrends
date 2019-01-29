@@ -25,6 +25,8 @@ def get_driver():
     opts = Options()
     opts.add_argument('--headless')
     opts.add_argument('--no-sandbox')
+    opts.add_argument('--disable-dev-shm-usage')
+    opts.add_argument("--disable-extensions")
     return webdriver.Chrome(chrome_options=opts,\
         executable_path=get_config_string('chromedriver_path', 'Selenium'))
 
