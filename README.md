@@ -1,5 +1,17 @@
 # NBA Trends
-This is a docker service that will use web-scraper jobs to pick up various NBA Information from popular websites and place them in a Hadoop file system (HDFS). Once populated, ETL jobs are then used to save to that data to a MySQL db which is used by an angular application to display the current trends in the NBA on a daily basis.
+This is a docker service that will use web-scraper jobs to pick up various NBA Information from popular websites and place them in a Hadoop file system (HDFS). Once populated, ETL jobs are then used to save to that data to a Mongo db which is used by a vue.js application to display the current trends and projected changes in the NBA on a daily basis.
+
+
+This docker swarm sends all logs to a splunk instance that you can visit at http://localhost:31000. The swarm consists of at minimum 8 containers.
+- Splunk Enterprise Instance
+- Hadoop Master Node
+- Hadoop Worker Node (can be scaled)
+- Spark Master Node
+- Spark Worker Node (can be scaled)
+- Job Executable Container
+- MongoDB instance
+- Apache Httpd instance for UI
+The goal is to have these re-occuring jobs that scrape the web for data, save that data to avro files through hdfs and then these files will be ultimately used to extract information that will be displayed through a UI.
 
 ### Getting Started
 - Ensure docker is installed
