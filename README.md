@@ -11,6 +11,8 @@ This docker swarm sends all logs to a splunk instance that you can visit at port
 - Job Executable Container
 - MongoDB instance
 - Apache Httpd instance for UI
+
+
 The goal is to have these re-occuring jobs that scrape the web for data, save that data to avro files through hdfs and then these files will be ultimately used to extract information that will be displayed through a UI.
 
 ### Getting Started
